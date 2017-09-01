@@ -8,8 +8,9 @@ const requestProxy = require('express-request-proxy'); // REVIEW: We've added a 
 const PORT = process.env.PORT || 3000;
 const app = express();
 // const conString = 'postgres://USERNAME:PASSWORD@HOST:PORT';
-const conString = 'postgres://postgres:Tableofcont1@localhost:5432/kilovolt';
-// const conString = ''; // TODO: Don't forget to set your own conString
+const conString = 'postgres://localhost:5432/kilovolt';
+// const conString = 'postgres://postgres:Tableofcont1@localhost:5432/kilovolt';
+// const conString = ''; // DONE: Don't forget to set your own conString
 const client = new pg.Client(conString);
 client.connect();
 client.on('error', err => console.error(err));
@@ -19,8 +20,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('./public'));
 
 
-// COMMENT: What is this function doing? Why do we need it? Where does it receive a request from?
-// (put your response in a comment here)
+// COMMENT:(DONE) What is this function doing? Why do we need it? Where does it receive a request from?
+// (This function acts as middleware to request url params from the Github model with AJAX.
+// Then the data responds to the server with authorizations.
+// We need it because this is how the server communicates with data.
+// It receives a request from url.)
 function proxyGitHub(request, response) {
   console.log('Routing GitHub request for', request.params[0]);
   (requestProxy({
@@ -30,8 +34,9 @@ function proxyGitHub(request, response) {
 }
 
 
-// COMMENT: What is this route doing? Where does it receive a request from?
-// (put your response in a comment here)
+// COMMENT:(DONE) What is this route doing? Where does it receive a request from?
+// When the the following urls are entered, it responds with the appropriate html file.)
+// It receieves a request from the url.
 app.get('/new', (request, response) => response.sendFile('new.html', {root: './public'}));
 app.get('/admin', (request, response) => response.sendFile('admin.html', {root: './public'}));
 app.get('/github/*', proxyGitHub);
@@ -107,8 +112,9 @@ app.post('/articles', function(request, response) {
 });
 
 
-// COMMENT: What is this route doing? Where does it receive a request from?
-// (put your response in a comment here)
+// COMMENT:(DONE) What is this route doing? Where does it receive a request from?
+// (This route updates the articles table with specified author rows.
+// It recieves a request from the client-side.)
 app.put('/articles/:id', (request, response) => {
   client.query(`
     UPDATE authors
